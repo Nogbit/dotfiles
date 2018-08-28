@@ -1,0 +1,32 @@
+#!/bin/sh
+# /usr/bin/i3exit
+
+# with openrc use loginctl
+[[ $(cat /proc/1/comm) == "systemd" ]] && logind=systemctl || logind=loginctl
+
+case "$1" in
+    lock)
+        # for some reason, I cant get .config/systemd/usr/* to actually autostart
+        # enabling and starting only works after I manually execute those systemd commands
+        # systemctl --user start xscreensaver && xscreensaver-command -activate
+        xscreensaver; xscreensaver-command -activate
+        ;;
+    logout)
+        i3-msg exit
+        ;;
+    suspend)
+        $logind suspend
+        ;;
+    reboot)
+        $logind reboot
+        ;;
+    shutdown)
+        $logind poweroff
+        ;;
+    *)
+        echo "== ! i3exit: missing or invalid argument ! =="
+        echo "Try again with: lock | logout | suspend | reboot | shutdown"
+        exit 2
+esac
+
+exit 0
